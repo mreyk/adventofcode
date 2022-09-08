@@ -1,27 +1,44 @@
 defmodule ThirdPartOne do
   def execute do
-    input = "00100\n11110\n10110\n10111\n10101\n01111\n00111\n11100\n10000\n11001\n00010\n01010"
-
-    # {:ok, output} = File.read("input.txt")
-    # {_items, %{h: horizontal, d: depth}} = output
-    # |> String.split("\n", trim: true)
+    {:ok, input} = File.read("input.txt")
 
     output = input
     |> String.split("\n", trim: true)
+    |> Enum.map(& &1 |> String.graphemes() |> List.to_tuple())
 
-    length = String.length(Enum.at(output, 0))
-    Enum.map(1..length, fn column ->
-      Enum.reduce(output, fn item ->
-	digit = String.to_integer(Enum.at(item, column))
-	
-	
-      end)
+    total = length(output)
+    line = (Enum.at(output, 0) |> Tuple.to_list() |> length()) - 1
+
+    gamma_list = for i <- 0..line do
+      zeros = Enum.count(output, &(elem(&1, i) == "0"))
+      ones = total - zeros
+      if zeros > ones do
+	"0"
+      else
+	"1"
+      end
+    end
+    
+    epsilon_list = gamma_list |> Enum.map(fn x ->
+      if x == "0" do
+	"1"
+      else "0"
+      end
     end)
-    
-    gamma_rate = "the most common value"
-    epsilon_rate = "the least common value"
-    power_consumption = gamma_rate * epsilon_rate
-    
+
+    epsilon =
+      epsilon_list
+      |> Enum.join("")
+      |> Integer.parse(2)
+      |> elem(0)
+
+    gamma =
+      gamma_list
+      |> Enum.join("")
+      |> Integer.parse(2)
+      |> elem(0)
+
+    gamma * epsilon
   end
 end
 
